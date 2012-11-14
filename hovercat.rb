@@ -117,16 +117,14 @@ class Hovercat
         #              triple[1]
         #
         #
-        if triple == get_triple([[x,y],[x-1,y+1],[x-2,y]])
-          return [x-1,y]
-          # case looks like this
-          #
-          #                    triple [0]
-          #           triple[2] center  triple[1]
-          #
-        elsif triple == get_triple([[x,y-1],[x+1,y],[x-1,y]])
-          return [x,y]
-        end
+        # or case looks like this
+        #
+        #                    triple [0]
+        #           triple[2] center  triple[1]
+        #
+        formation1 = get_triple([[x+1,y], [x,y+1], [x-1,y]])
+        formation2 = get_triple([[x,y-1], [x+1,y],[ x-1,y]])
+        return [x,y] if [formation1, formation2].include? triple
       end
     elsif mode == :down or mode == :up
       alphabet.length.times do |y|
@@ -134,15 +132,13 @@ class Hovercat
         #         triple[0]
         #         center triple[1]
         #         triple[2]
-        if triple == get_triple([[x,y],[x+1, y+1], [x, y+2]])
-          return [x, y+1]
-          #case looks like this
-          #            triple[0]
-          #triple [2]   center
-          #            triple[1]
-        elsif triple == get_triple([[x,y-1],[x,y+1],[x-1,y]])
-          return [x,y]
-        end
+        # or case looks like this
+        #            triple[0]
+        #triple [2]   center
+        #            triple[1]
+        formation1 = get_triple([[x,y-1], [x+1, y], [x, y+1]])
+        formation2 = get_triple([[x,y-1], [x,y+1], [x-1,y]])
+        return [x,y] if [formation1, formation2].include? triple
       end
     end
   end
