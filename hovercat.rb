@@ -183,7 +183,7 @@ end
 
 
 c = Hovercat.new
-["words", "cows", "you", "just", "write", "what", "im", "typing", "right", "now"].each do |word|
+["words", "cows", "you", "just", "write", "what", "im", "typing", "right", "now", "boooom", "________"].each do |word|
   r = c.encrypt(word)
   if c.decrypt(r) != word
     puts "fail #{word}"
