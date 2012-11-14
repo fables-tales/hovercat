@@ -186,8 +186,6 @@ class Hovercat
     alphabet.length.times do |y|
       return y if get(x,y) == value
     end
-
-    return nil
   end
 
   def get(x,y)
