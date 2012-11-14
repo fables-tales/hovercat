@@ -17,42 +17,50 @@ class Hovercat
     i = 0
     char = string[i]
     while i < string.length
-      if mode == :right
-        x += 1
-      elsif mode == :down
-        y += 1
-      elsif mode == :left
-        x -= 1
-      elsif mode == :up
-        y -= 1
-      end
+      x,y = move(x, y, mode)
 
       if get(x,y) == char
         old_char = char
         i += 1
         char = string[i]
         char = "@" if char == old_char
+
         if i == string.length
           new_mode = nil
         else
           new_mode = new_direction(x, y, char, mode)
         end
-        if mode == :left or mode == :right
-          result += get(x, y-1) if new_mode == :up
-          result += get(x+1, y)
-          result += get(x, y+1) if new_mode == :down
-          result += get(x-1, y)
-        elsif mode == :down or mode == :up
-          result += get(x, y-1)
-          result += get(x+1, y) if new_mode == :right
-          result += get(x, y+1)
-          result += get(x-1, y) if new_mode == :left
-        end
+
+        result += emit_tokens(x, y, mode, new_mode)
 
         mode = new_mode
       end
     end
+
     return result
+  end
+
+  def emit_tokens(x, y, mode, new_mode)
+    result = ""
+    result += get(x, y-1) if new_mode == :up or [:up, :down].include? mode
+    result += get(x+1, y) if new_mode == :right or [:left, :right].include? mode
+    result += get(x, y+1) if new_mode == :down or [:up, :down].include? mode
+    result += get(x-1, y) if new_mode == :left or [:left, :right].include? mode
+    return result
+  end
+
+  def move(x, y, mode)
+    if mode == :right
+      x += 1
+    elsif mode == :down
+      y += 1
+    elsif mode == :left
+      x -= 1
+    elsif mode == :up
+      y -= 1
+    end
+
+    return [x,y]
   end
 
   def decrypt(string)
@@ -109,14 +117,14 @@ class Hovercat
         #              triple[1]
         #
         #
-        if triple[0] == get(x,y) and triple[1] == get(x-1, y+1) and (triple.length == 2 or triple[2] == get(x-2,y))
+        if triple == get_triple([[x,y],[x-1,y+1],[x-2,y]])
           return [x-1,y]
-        # case looks like this
-        #
-        #                    triple [0]
-        #           triple[2] center  triple[1]
-        #
-        elsif triple[0] == get(x, y-1) and triple[1] == get(x+1, y) and (triple.length == 2 or triple[2] == get(x-1, y))
+          # case looks like this
+          #
+          #                    triple [0]
+          #           triple[2] center  triple[1]
+          #
+        elsif triple == get_triple([[x,y-1],[x+1,y],[x-1,y]])
           return [x,y]
         end
       end
@@ -126,17 +134,21 @@ class Hovercat
         #         triple[0]
         #         center triple[1]
         #         triple[2]
-        if triple[0] == get(x,y) and triple[1] == get(x+1, y+1) and (triple.length == 2 or triple[2] == get(x,y+2))
+        if triple == get_triple([[x,y],[x+1, y+1], [x, y+2]])
           return [x, y+1]
-        #case looks like this
-        #            triple[0]
-        #triple [2]   center
-        #            triple[1]
-        elsif triple[0] == get(x, y-1) and triple[1] == get(x, y+1) and (triple.length == 2 or triple[2] == get(x-1, y))
+          #case looks like this
+          #            triple[0]
+          #triple [2]   center
+          #            triple[1]
+        elsif triple == get_triple([[x,y-1],[x,y+1],[x-1,y]])
           return [x,y]
         end
       end
     end
+  end
+
+  def get_triple(coords)
+    coords.map {|pos| get(pos[0], pos[1])}.join("")
   end
 
 
