@@ -85,10 +85,10 @@ class Hovercat
   end
 
   def decryption_new_direction(x,y,mode, triple)
-    if mode == :right or mode == :left
+    if is_horizontal(mode)
       return :up if triple[0] == get(x,y-1)
       return :down if triple[1] == get(x,y+1)
-    elsif mode == :up or mode == :down
+    elsif is_vertical(mode)
       return :right if triple[1] == get(x+1, y)
       return :left if triple[2] == get(x-1, y)
     end
@@ -108,7 +108,7 @@ class Hovercat
 
   def triple_center(x,y,mode,triple)
     return double_center(x,y,mode,triple) if triple.length == 2
-    if mode == :right or mode == :left
+    if is_horizontal(mode)
       alphabet.length.times do |x|
         # case looks like this
         #
@@ -126,7 +126,7 @@ class Hovercat
         formation2 = get_triple([[x,y-1], [x+1,y],[ x-1,y]])
         return [x,y] if [formation1, formation2].include? triple
       end
-    elsif mode == :down or mode == :up
+    elsif is_vertical(mode)
       alphabet.length.times do |y|
         #case looks like this
         #         triple[0]
@@ -149,7 +149,7 @@ class Hovercat
 
 
   def new_direction(x, y, char, current_direction)
-    if current_direction == :left or current_direction == :right
+    if is_horizontal(current_direction)
       position = search_column(x, char)
       return :up if position == x
       if position > y
@@ -157,7 +157,7 @@ class Hovercat
       else
         return :up
       end
-    elsif current_direction == :down or current_direction == :up
+    elsif is_vertical(current_direction)
       position = search_row(y, char)
       return :right if position == y
       if position < x
@@ -166,6 +166,14 @@ class Hovercat
         return :right
       end
     end
+  end
+
+  def is_vertical(mode)
+    (mode == :up) or (mode == :down)
+  end
+
+  def is_horizontal(mode)
+    (mode == :left) or (mode == :right)
   end
 
   def search_row(y, value)
