@@ -1,0 +1,3 @@
+[submodule "lsquare"]
+	path = lsquare
+	url = https://github.com/samphippen/lsquare.git
