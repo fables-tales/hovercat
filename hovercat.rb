@@ -42,10 +42,10 @@ class Hovercat
 
   def emit_tokens(x, y, mode, new_mode)
     result = ""
-    result += get(x, y-1) if new_mode == :up or [:up, :down].include? mode
-    result += get(x+1, y) if new_mode == :right or [:left, :right].include? mode
-    result += get(x, y+1) if new_mode == :down or [:up, :down].include? mode
-    result += get(x-1, y) if new_mode == :left or [:left, :right].include? mode
+    result += get(x, y-1) if new_mode == :up or is_vertical(mode)
+    result += get(x+1, y) if new_mode == :right or is_horizontal(mode)
+    result += get(x, y+1) if new_mode == :down or is_vertical(mode)
+    result += get(x-1, y) if new_mode == :left or is_horizontal(mode)
     return result
   end
 
@@ -95,7 +95,7 @@ class Hovercat
   end
 
   def double_center(x,y,mode,triple)
-    if mode == :left or mode == :right
+    if is_horizontal(mode)
       alphabet.length.times do |x|
         return [x,y] if get(x+1,y) == triple[0] and get(x-1,y) == triple[1]
       end
